@@ -271,20 +271,20 @@ export default function EditDepartment() {
                       <button
                         onClick={() => {
                           const programmeTable = `
-<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-family: Arial, sans-serif;">
-    <thead>
-        <tr style="background-color: #f8f8f8; border-bottom: 2px solid #990033;">
-            <th style="padding: 12px; text-align: left; width: 40%; border: 1px solid #ddd; font-weight: bold; color: #333;">PROGRAMMES</th>
-            <th style="padding: 12px; text-align: left; width: 60%; border: 1px solid #ddd; font-weight: bold; color: #333;">OFFERED</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="padding: 12px; border: 1px solid #ddd; color: #444; font-weight: 500;"><b>Programme</b></td>
-            <td style="padding: 12px; border: 1px solid #ddd; color: #444;"><b>Eligibility</b></td>
-        </tr>
-    </tbody>
-</table>
+                              <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-family: Arial, sans-serif;">
+                                <thead>
+                                     <tr style="background-color: #f8f8f8; border-bottom: 2px solid #990033;">
+                                       <th style="padding: 12px; text-align: left; width: 40%; border: 1px solid #ddd; font-weight: bold; color: #333;">PROGRAMMES</th>
+                                       <th style="padding: 12px; text-align: left; width: 60%; border: 1px solid #ddd; font-weight: bold; color: #333;">OFFERED</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     <tr>
+                                        <td style="padding: 12px; border: 1px solid #ddd; color: #444; font-weight: 500;"><b>Programme</b></td>
+                                        <td style="padding: 12px; border: 1px solid #ddd; color: #444;"><b>Eligibility</b></td>
+                                     </tr>
+                                 </tbody>
+                              </table>
                            `;
                           setActiveSection({ ...activeSection, content: activeSection.content + programmeTable });
                         }}
