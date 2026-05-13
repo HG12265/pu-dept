@@ -42,6 +42,8 @@ const schoolData = [
 ];
 
 export default function SchoolsAndDepartments() {
+  const slugify = (text) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+
   return (
     <div className="bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1140px] mx-auto">
@@ -60,7 +62,7 @@ export default function SchoolsAndDepartments() {
                   {school.departments.map((dept, deptIndex) => (
                     <li key={deptIndex} className="p-4 bg-white hover:bg-gray-50 transition-colors">
                       <a 
-                        href="#" 
+                        href={`/dept/${slugify(dept)}`} 
                         className="text-[#007bff] text-[15px] font-medium hover:underline block"
                       >
                         {dept}
