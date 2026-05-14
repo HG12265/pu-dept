@@ -28,10 +28,12 @@ export default function EditDepartment() {
   const router = useRouter();
   const [dept, setDept] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
   // States for adding new items
   const [newSection, setNewSection] = useState({ title: '', content: '' });
   const [newLink, setNewLink] = useState({ label: '', url: '' });
+  const [syllabusFormData, setSyllabusFormData] = useState({ sno: '', title: '', file: null });
 
   // New state for view management
   const [view, setView] = useState('dashboard'); // 'dashboard', 'category', 'editor'
@@ -48,6 +50,7 @@ export default function EditDepartment() {
     { name: 'Activities', icon: '⚡', slug: 'activities' },
     { name: 'Facilities', icon: '🏢', slug: 'facilities' },
     { name: 'Funded Projects', icon: '💰', slug: 'projects' },
+    { name: 'PDF', icon: '📄', slug: 'pdf' },
     { name: 'Alumni', icon: '🤝', slug: 'alumni' },
     { name: 'Contact', icon: '📞', slug: 'contact' },
   ];
@@ -254,80 +257,224 @@ export default function EditDepartment() {
               </div>
 
               <div className="p-8 space-y-6">
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Section Title (e.g., VISION)</label>
-                    <input
-                      type="text"
-                      value={activeSection.section_title}
-                      onChange={(e) => setActiveSection({ ...activeSection, section_title: e.target.value })}
-                      className="text-2xl font-bold w-full p-2 border-0 border-b-2 border-gray-100 focus:border-blue-400 focus:outline-none transition-colors"
-                      placeholder="Enter Title..."
-                    />
-                  </div>
-                  <div className="w-1/3">
-                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Quick Templates</label>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => {
-                          const programmeTable = `
-                              <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-family: Arial, sans-serif;">
-                                <thead>
-                                     <tr style="background-color: #f8f8f8; border-bottom: 2px solid #990033;">
-                                       <th style="padding: 12px; text-align: left; width: 40%; border: 1px solid #ddd; font-weight: bold; color: #333;">PROGRAMMES</th>
-                                       <th style="padding: 12px; text-align: left; width: 60%; border: 1px solid #ddd; font-weight: bold; color: #333;">OFFERED</th>
-                                     </tr>
-                                 </thead>
-                                 <tbody>
-                                     <tr>
-                                        <td style="padding: 12px; border: 1px solid #ddd; color: #444; font-weight: 500;"><b>Programme</b></td>
-                                        <td style="padding: 12px; border: 1px solid #ddd; color: #444;"><b>Eligibility</b></td>
-                                     </tr>
-                                 </tbody>
-                              </table>
-                           `;
-                          setActiveSection({ ...activeSection, content: activeSection.content + programmeTable });
-                        }}
-                        className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-bold cursor-pointer border-none transition"
-                      >
-                        + Programmes Table
-                      </button>
-                      <button
-                        onClick={() => {
-                          const newRow = `
-                             <tr>
-                               <td style="padding: 12px; border: 1px solid #ddd; color: #444; font-weight: 500;"></td>
-                               <td style="padding: 12px; border: 1px solid #ddd; color: #444;"></td>
-                             </tr>
-                           `;
-                          if (activeSection.content.toLowerCase().includes('</tbody>')) {
-                            setActiveSection({
-                              ...activeSection,
-                              content: activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>')
-                            });
-                          } else {
-                            alert('Please insert the Programmes Table first!');
-                          }
-                        }}
-                        className="px-3 py-1 bg-blue-100 hover:bg-blue-200 rounded text-xs font-bold cursor-pointer border-none transition text-blue-700"
-                      >
-                        + Add Row
-                      </button>
-                      <button
-                        onClick={() => {
-                          const content = activeSection.content;
-                          const trMatches = Array.from(content.matchAll(/<tr[\s\S]*?<\/tr>/gi));
-                          if (trMatches.length > 1) {
-                            const lastTr = trMatches[trMatches.length - 1];
-                            const newContent = content.substring(0, lastTr.index) + content.substring(lastTr.index + lastTr[0].length);
-                            setActiveSection({ ...activeSection, content: newContent });
-                          }
-                        }}
-                        className="px-3 py-1 bg-red-100 hover:bg-red-200 rounded text-xs font-bold cursor-pointer border-none transition text-red-700"
-                      >
-                        - Remove Last Row
-                      </button>
+                <div className={`${activeCategory?.slug === 'syllabus' ? 'block' : 'flex gap-4'}`}>
+                  {activeCategory?.slug !== 'syllabus' && (
+                    <div className="flex-1">
+                      <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Section Title (e.g., VISION)</label>
+                      <input
+                        type="text"
+                        value={activeSection.section_title}
+                        onChange={(e) => setActiveSection({ ...activeSection, section_title: e.target.value })}
+                        className="text-2xl font-bold w-full p-2 border-0 border-b-2 border-gray-100 focus:border-blue-400 focus:outline-none transition-colors"
+                        placeholder="Enter Title..."
+                      />
                     </div>
+                  )}
+                  
+                  <div className={`${activeCategory?.slug === 'syllabus' ? 'w-full' : 'w-1/3'}`}>
+                    {activeCategory?.slug === 'syllabus' ? (
+                      <div className="w-full p-6 bg-white rounded-2xl shadow-sm border-2 border-blue-50 border-dashed">
+                        <div className="flex items-center justify-between mb-6">
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-800 m-0">Syllabus Row Builder</h3>
+                            <p className="text-xs text-gray-400 mt-1 uppercase font-bold tracking-tighter">Current Section: {activeSection.section_title || 'Syllabus'}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                const yearBar = `
+                                  <div style="background-color: #17a2b8; color: white; padding: 12px; font-weight: bold; text-align: center; margin: 25px 0; font-family: sans-serif; border-radius: 4px; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">
+                                    2023 - 2024 ONWARDS
+                                  </div>
+                                `;
+                                setActiveSection({ ...activeSection, content: activeSection.content + yearBar });
+                              }}
+                              className="px-4 py-2 bg-teal-500 text-white rounded-lg text-xs font-bold hover:bg-teal-600 transition border-none cursor-pointer shadow-sm"
+                            >
+                              + Add Year Header
+                            </button>
+                            <button
+                              onClick={() => {
+                                const template = `
+                                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-family: sans-serif;">
+                                    <thead>
+                                      <tr style="border-bottom: 2px solid #eee;">
+                                        <th style="padding: 12px; text-align: left; width: 10%; font-weight: bold; color: #333;">S.No</th>
+                                        <th style="padding: 12px; text-align: left; width: 70%; font-weight: bold; color: #333;">PROGRAMMES</th>
+                                        <th style="padding: 12px; text-align: right; width: 20%; font-weight: bold; color: #333;">DETAILS</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                  </table>
+                                `;
+                                setActiveSection({ ...activeSection, content: activeSection.content + template });
+                              }}
+                              className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-bold hover:bg-black transition border-none cursor-pointer shadow-sm"
+                            >
+                              + Insert New Table
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100">
+                          <div className="w-20">
+                            <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">S.No</label>
+                            <input 
+                              type="text" 
+                              value={syllabusFormData.sno}
+                              onChange={(e) => setSyllabusFormData({...syllabusFormData, sno: e.target.value})}
+                              className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white transition-all font-bold text-center"
+                              placeholder="1"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Programme Name</label>
+                            <input 
+                              type="text" 
+                              value={syllabusFormData.title}
+                              onChange={(e) => setSyllabusFormData({...syllabusFormData, title: e.target.value})}
+                              className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white transition-all"
+                              placeholder="e.g. M.Sc. Biochemistry (2024-25)"
+                            />
+                          </div>
+                          <div className="w-64">
+                            <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Syllabus PDF File</label>
+                            <input 
+                              type="file" 
+                              accept=".pdf"
+                              onChange={(e) => setSyllabusFormData({...syllabusFormData, file: e.target.files[0]})}
+                              className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg bg-white file:hidden"
+                            />
+                            {syllabusFormData.file && <div className="text-[10px] text-green-600 font-bold mt-1 truncate">Selected: {syllabusFormData.file.name}</div>}
+                          </div>
+                          <button
+                            onClick={async () => {
+                              if (!syllabusFormData.sno || !syllabusFormData.title || !syllabusFormData.file) {
+                                alert('Please fill all fields and select a PDF!');
+                                return;
+                              }
+                              setUploading(true);
+                              const formData = new FormData();
+                              formData.append('file', syllabusFormData.file);
+                              try {
+                                const base = apiUrl.replace('/api', '');
+                                const res = await fetch(`${apiUrl}/admin/upload`, {
+                                  method: 'POST',
+                                  body: formData
+                                });
+                                const data = await res.json();
+                                
+                                const newRow = `
+                                  <tr style="border-bottom: 1px solid #f2f2f2;">
+                                    <td style="padding: 15px 12px; color: #444; font-size: 14px;">${syllabusFormData.sno}</td>
+                                    <td style="padding: 15px 12px; color: #333; font-weight: 500; font-size: 14px;">${syllabusFormData.title}</td>
+                                    <td style="padding: 15px 12px; text-align: right;">
+                                      <a href="${base}${data.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none; font-size: 13px; text-transform: uppercase;">SYLLABUS</a>
+                                    </td>
+                                  </tr>
+                                `;
+                                
+                                if (activeSection.content.toLowerCase().includes('</tbody>')) {
+                                  let newContent = activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>');
+                                  setActiveSection({ ...activeSection, content: newContent });
+                                  setSyllabusFormData({ sno: '', title: '', file: null });
+                                  alert('✓ New Row Added to Table!');
+                                } else {
+                                  alert('Please insert a Syllabus Table first!');
+                                }
+                              } catch (err) { alert('Failed to add row'); }
+                              setUploading(false);
+                            }}
+                            disabled={uploading}
+                            className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 disabled:bg-gray-400 transition-all cursor-pointer shadow-lg active:scale-95"
+                          >
+                            {uploading ? 'UPLOADING...' : 'ADD ROW TO TABLE'}
+                          </button>
+                        </div>
+                        
+                        <div className="mt-4 flex justify-end">
+                           <button
+                            onClick={() => {
+                              const content = activeSection.content;
+                              const trMatches = Array.from(content.matchAll(/<tr[\s\S]*?<\/tr>/gi));
+                              if (trMatches.length > 1) {
+                                const lastTr = trMatches[trMatches.length - 1];
+                                const newContent = content.substring(0, lastTr.index) + content.substring(lastTr.index + lastTr[0].length);
+                                setActiveSection({ ...activeSection, content: newContent });
+                              }
+                            }}
+                            className="text-red-500 font-bold text-xs hover:underline bg-transparent border-none cursor-pointer"
+                          >
+                            - Remove Last Row From Table
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Quick Templates</label>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => {
+                              const template = `
+                                <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-family: Arial, sans-serif;">
+                                  <thead>
+                                       <tr style="background-color: #f8f8f8; border-bottom: 2px solid #990033;">
+                                         <th style="padding: 12px; text-align: left; width: 40%; border: 1px solid #ddd; font-weight: bold; color: #333;">PROGRAMMES</th>
+                                         <th style="padding: 12px; text-align: left; width: 60%; border: 1px solid #ddd; font-weight: bold; color: #333;">OFFERED</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                       <tr>
+                                          <td style="padding: 12px; border: 1px solid #ddd; color: #444; font-weight: 500;"><b>Programme</b></td>
+                                          <td style="padding: 12px; border: 1px solid #ddd; color: #444;"><b>Eligibility</b></td>
+                                       </tr>
+                                   </tbody>
+                                </table>
+                              `;
+                              setActiveSection({ ...activeSection, content: activeSection.content + template });
+                            }}
+                            className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-bold cursor-pointer border-none transition"
+                          >
+                            + Table Template
+                          </button>
+                          <button
+                            onClick={() => {
+                              const newRow = `
+                                 <tr>
+                                   <td style="padding: 12px; border: 1px solid #ddd; color: #444; font-weight: 500;"></td>
+                                   <td style="padding: 12px; border: 1px solid #ddd; color: #444;"></td>
+                                 </tr>
+                               `;
+                              if (activeSection.content.toLowerCase().includes('</tbody>')) {
+                                setActiveSection({
+                                  ...activeSection,
+                                  content: activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>')
+                                });
+                              } else {
+                                alert('Please insert a Table first!');
+                              }
+                            }}
+                            className="px-3 py-1 bg-blue-100 hover:bg-blue-200 rounded text-xs font-bold cursor-pointer border-none transition text-blue-700"
+                          >
+                            + Add Row
+                          </button>
+                          <button
+                            onClick={() => {
+                              const content = activeSection.content;
+                              const trMatches = Array.from(content.matchAll(/<tr[\s\S]*?<\/tr>/gi));
+                              if (trMatches.length > 1) {
+                                const lastTr = trMatches[trMatches.length - 1];
+                                const newContent = content.substring(0, lastTr.index) + content.substring(lastTr.index + lastTr[0].length);
+                                setActiveSection({ ...activeSection, content: newContent });
+                              }
+                            }}
+                            className="px-3 py-1 bg-red-100 hover:bg-red-200 rounded text-xs font-bold cursor-pointer border-none transition text-red-700"
+                          >
+                            - Remove Last Row
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 

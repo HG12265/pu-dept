@@ -1,13 +1,25 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import models
+import shutil
+import os
 from database import SessionLocal, engine, get_db
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Periyar University API")
+
+# Create uploads directory if it doesn't exist
+UPLOAD_DIR = "uploads"
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
+    os.makedirs(os.path.join(UPLOAD_DIR, "syllabus"))
+
+# Mount static files
+app.mount("/api/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # CORS middleware
 app.add_middleware(
@@ -21,6 +33,16 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Periyar University API"}
+
+@app.post("/api/admin/upload")
+async def upload_file(file: UploadFile = File(...)):
+    file_path = os.path.join(UPLOAD_DIR, "syllabus", file.filename)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Return the URL to access the file
+    file_url = f"/api/uploads/syllabus/{file.filename}"
+    return {"url": file_url}
 
 @app.get("/api/departments")
 def get_departments(db: Session = Depends(get_db)):

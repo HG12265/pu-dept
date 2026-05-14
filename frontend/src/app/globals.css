@@ -37,3 +37,145 @@ body {
 .text-shadow-sm {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
+/* Syllabus page table styling */
+.syllabus-content {
+  width: 100%;
+}
+
+.syllabus-content .syllabus-year-row {
+  margin: 1.5rem 0 0.75rem;
+  padding: 0.95rem 1rem;
+  background-color: #0f7e8a;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 18px;
+}
+
+.syllabus-content table.syllabus-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.75rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.syllabus-content div[style*="background-color: #17a2b8"] {
+  margin: 1.5rem 0 0.75rem;
+  padding: 0.95rem 1rem;
+  background-color: #0f7e8a;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 18px;
+}
+
+.syllabus-content table[style*="border-collapse: collapse"] {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  margin-top: 0.75rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.syllabus-content table[style*="border-collapse: collapse"] th,
+.syllabus-content table[style*="border-collapse: collapse"] td {
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  padding: 1rem 1.1rem;
+  vertical-align: middle;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.syllabus-content table[style*="border-collapse: collapse"] th:last-child,
+.syllabus-content table[style*="border-collapse: collapse"] td:last-child {
+  border-right: none;
+  text-align: right;
+}
+
+.syllabus-content table[style*="border-collapse: collapse"] tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.syllabus-content table[style*="border-collapse: collapse"] tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.syllabus-content table[style*="border-collapse: collapse"] tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.syllabus-content table[style*="border-collapse: collapse"] thead th {
+  background-color: #f8fafc;
+  color: #111827;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+}
+
+.syllabus-content thead tr {
+  background-color: #f8fafc;
+}
+
+.syllabus-content th,
+.syllabus-content td {
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  padding: 1rem 1.1rem;
+  vertical-align: middle;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.syllabus-content table.syllabus-table thead th {
+  background-color: #f8fafc;
+  color: #111827;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+}
+
+.syllabus-content table.syllabus-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.syllabus-content .syllabus-year-row + .syllabus-table {
+  margin-top: 0.5rem;
+}
+
+.syllabus-content th:last-child,
+.syllabus-content td:last-child {
+  border-right: none;
+}
+
+.syllabus-content tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.syllabus-content tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.syllabus-content a {
+  color: #c70440;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.syllabus-content a:hover {
+  text-decoration: underline;
+}
+
+.syllabus-content p,
+.syllabus-content span,
+.syllabus-content strong,
+.syllabus-content em {
+  color: #1f2937;
+}

@@ -23,6 +23,7 @@ export default function DeptPage() {
     { name: 'Activities', slug: 'activities' },
     { name: 'Facilities', slug: 'facilities' },
     { name: 'Funded Projects', slug: 'projects' },
+    { name: 'PDF', slug: 'pdf' },
     { name: 'Alumni', slug: 'alumni' },
     { name: 'Contact', slug: 'contact' },
   ];
@@ -62,6 +63,9 @@ export default function DeptPage() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  const syllabusSections = dept?.sections?.filter(section => section.category === 'syllabus') || [];
+  const isSyllabusTab = activeTab === 'syllabus';
+
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
@@ -96,9 +100,9 @@ export default function DeptPage() {
       <MainHeader />
       <Navbar />
       
-      <div className="bg-[#eeeeee] py-8 border-b border-gray-200">
-        <div className="container mx-auto max-w-[1140px] px-[15px] text-center">
-          <h1 className="text-[#7a0000] text-[28px] md:text-[34px] font-bold uppercase tracking-wide m-0">
+      <div className="bg-[#ebf0f2] py-12 md:py-16 border-b border-gray-200 shadow-sm px-[15px]">
+        <div className="container mx-auto max-w-[1140px] text-center bg-white/50 py-8 rounded-xl backdrop-blur-sm shadow-inner border border-white/50">
+          <h1 className="text-[#990033] text-[26px] md:text-[38px] font-bold uppercase tracking-[2px] m-0 leading-tight">
             {dept.title || `Department of ${dept.name}`}
           </h1>
         </div>
@@ -113,29 +117,44 @@ export default function DeptPage() {
         }))} 
       />
 
-      <main className="flex-1 py-10 bg-white min-h-[500px]">
+      <main className="flex-1 py-4 bg-white min-h-[600px]">
         <div className="container mx-auto max-w-[1140px] px-[15px]">
-          {dept.sections && dept.sections
-            .filter(section => section.category === activeTab)
-            .map((section, idx) => (
-              <div key={idx} className="mb-12 animate-in fade-in slide-in-from-top-2 duration-500">
-                <h3 className="text-[#990033] text-[22px] font-bold mb-6 uppercase border-b-2 border-[#f0f0f0] pb-3 flex items-center gap-3">
-                  <span className="w-1.5 h-6 bg-[#990033] rounded-full"></span>
-                  {section.section_title}
-                </h3>
-                <div 
-                  className="text-[16px] text-[#333] leading-relaxed prose max-w-none 
-                    prose-headings:text-[#7a0000] prose-a:text-blue-600 prose-table:w-full 
-                    prose-table:border-collapse prose-td:border prose-td:border-gray-200 
-                    prose-td:p-3 prose-th:bg-gray-50 prose-th:p-3 prose-img:rounded-lg"
-                  dangerouslySetInnerHTML={{ __html: section.content }}
-                />
-              </div>
-            ))}
+          {/* Active Tab Heading */}
+          <div className="mb-8 pt-6">
+            <h2 className="text-[#333] text-[24px] md:text-[28px] font-bold m-0 pb-4 border-b border-gray-200">
+              {categories.find(c => c.slug === activeTab)?.name}
+            </h2>
+          </div>
+
+          <div className={`space-y-12 ${isSyllabusTab ? 'bg-white rounded-[35px] border border-gray-200 p-6 shadow-sm mb-8' : ''}`}>
+            {dept.sections && dept.sections
+              .filter(section => section.category === activeTab)
+              .map((section, idx) => {
+                const hasTable = /<table[\s>]/i.test(section.content);
+
+                return (
+                  <div key={idx} className="animate-in fade-in slide-in-from-top-2 duration-500">
+                    {/* Only show section title if it's different from the category name or if there is no table markup */}
+                    {section.section_title && section.section_title.toLowerCase() !== activeTab.toLowerCase() && !hasTable && (
+                      <h3 className="text-[#990033] text-[20px] font-bold mb-4 uppercase flex items-center gap-2">
+                         {section.section_title}
+                      </h3>
+                    )}
+                    <div 
+                      className={`text-[15px] md:text-[16px] text-[#444] leading-[1.8] ${isSyllabusTab ? 'syllabus-content' : 'prose'} max-w-none overflow-x-auto 
+                        prose-headings:text-[#7a0000] prose-a:text-[#d9534f] prose-a:font-bold 
+                        prose-table:w-full prose-table:my-6
+                        prose-table:border-collapse prose-td:p-3 prose-th:p-3`}
+                      dangerouslySetInnerHTML={{ __html: section.content }}
+                    />
+                  </div>
+                );
+              })}
+          </div>
           
           {dept.sections && dept.sections.filter(s => s.category === activeTab).length === 0 && (
-            <div className="text-center py-20 text-gray-400 font-bold">
-               No content available for this section yet.
+            <div className="text-center py-32 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
+               <p className="text-gray-400 font-bold text-lg">No content available for {activeTab} yet.</p>
             </div>
           )}
         </div>
