@@ -17,6 +17,7 @@ UPLOAD_DIR = "uploads"
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
     os.makedirs(os.path.join(UPLOAD_DIR, "syllabus"))
+    os.makedirs(os.path.join(UPLOAD_DIR, "faculties"))
 
 # Mount static files
 app.mount("/api/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
@@ -35,13 +36,16 @@ def read_root():
     return {"message": "Welcome to Periyar University API"}
 
 @app.post("/api/admin/upload")
-async def upload_file(file: UploadFile = File(...)):
-    file_path = os.path.join(UPLOAD_DIR, "syllabus", file.filename)
+async def upload_file(file: UploadFile = File(...), folder: str = "syllabus"):
+    # Ensure folder is safe
+    safe_folder = "syllabus" if "syllabus" in folder else "faculties" if "faculty" in folder else "syllabus"
+    
+    file_path = os.path.join(UPLOAD_DIR, safe_folder, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
     # Return the URL to access the file
-    file_url = f"/api/uploads/syllabus/{file.filename}"
+    file_url = f"/api/uploads/{safe_folder}/{file.filename}"
     return {"url": file_url}
 
 @app.get("/api/departments")
@@ -54,7 +58,7 @@ def get_department_by_slug(slug: str, db: Session = Depends(get_db)):
     if not dept:
         raise HTTPException(status_code=404, detail="Department not found")
     
-    # Return full data including sections and nav links
+    # Return full data including sections, nav links, and faculties
     return {
         "id": dept.id,
         "name": dept.name,
@@ -62,7 +66,8 @@ def get_department_by_slug(slug: str, db: Session = Depends(get_db)):
         "title": dept.title,
         "banner_image": dept.banner_image,
         "sections": sorted(dept.sections, key=lambda x: x.order_index),
-        "nav_links": sorted(dept.nav_links, key=lambda x: x.order_index)
+        "nav_links": sorted(dept.nav_links, key=lambda x: x.order_index),
+        "faculties": sorted(dept.faculties, key=lambda x: x.order_index)
     }
 
 # Admin - Departments
@@ -82,7 +87,8 @@ def admin_get_department(dept_id: int, db: Session = Depends(get_db)):
         "title": dept.title,
         "banner_image": dept.banner_image,
         "sections": sorted(dept.sections, key=lambda x: x.order_index),
-        "nav_links": sorted(dept.nav_links, key=lambda x: x.order_index)
+        "nav_links": sorted(dept.nav_links, key=lambda x: x.order_index),
+        "faculties": sorted(dept.faculties, key=lambda x: x.order_index)
     }
 
 @app.post("/api/admin/departments")
@@ -134,6 +140,25 @@ class NavLinkCreate(BaseModel):
     label: str
     url: str
     order: int = 0
+
+class FacultyCreate(BaseModel):
+    dept_id: int
+    name: str
+    designation: str = None
+    email: str = None
+    specialization: str = None
+    image_url: str = None
+    is_former: int = 0
+    order: int = 0
+
+class FacultyUpdate(BaseModel):
+    name: str = None
+    designation: str = None
+    email: str = None
+    specialization: str = None
+    image_url: str = None
+    is_former: int = None
+    order: int = None
 
 # Admin - Sections
 @app.post("/api/admin/sections")
@@ -193,6 +218,50 @@ def delete_nav_link(link_id: int, db: Session = Depends(get_db)):
     db.delete(link)
     db.commit()
     return {"message": "Link deleted"}
+
+# Admin - Faculties
+@app.post("/api/admin/faculties")
+def add_faculty(data: FacultyCreate, db: Session = Depends(get_db)):
+    db_faculty = models.Faculty(
+        dept_id=data.dept_id,
+        name=data.name,
+        designation=data.designation,
+        email=data.email,
+        specialization=data.specialization,
+        image_url=data.image_url,
+        is_former=data.is_former,
+        order_index=data.order
+    )
+    db.add(db_faculty)
+    db.commit()
+    db.refresh(db_faculty)
+    return db_faculty
+
+@app.put("/api/admin/faculties/{faculty_id}")
+def update_faculty(faculty_id: int, data: FacultyUpdate, db: Session = Depends(get_db)):
+    faculty = db.query(models.Faculty).filter(models.Faculty.id == faculty_id).first()
+    if not faculty:
+        raise HTTPException(status_code=404, detail="Faculty not found")
+    
+    if data.name is not None: faculty.name = data.name
+    if data.designation is not None: faculty.designation = data.designation
+    if data.email is not None: faculty.email = data.email
+    if data.specialization is not None: faculty.specialization = data.specialization
+    if data.image_url is not None: faculty.image_url = data.image_url
+    if data.is_former is not None: faculty.is_former = data.is_former
+    if data.order is not None: faculty.order_index = data.order
+    
+    db.commit()
+    return faculty
+
+@app.post("/api/admin/remove-faculty/{faculty_id}")
+def delete_faculty(faculty_id: int, db: Session = Depends(get_db)):
+    faculty = db.query(models.Faculty).filter(models.Faculty.id == faculty_id).first()
+    if not faculty:
+        raise HTTPException(status_code=404, detail="Faculty not found")
+    db.delete(faculty)
+    db.commit()
+    return {"message": "Faculty deleted"}
 
 if __name__ == "__main__":
     import uvicorn

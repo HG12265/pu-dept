@@ -13,6 +13,7 @@ class Department(Base):
     
     sections = relationship("DepartmentSection", back_populates="department", cascade="all, delete-orphan")
     nav_links = relationship("DepartmentNavLink", back_populates="department", cascade="all, delete-orphan")
+    faculties = relationship("Faculty", back_populates="department", cascade="all, delete-orphan")
 
 class DepartmentSection(Base):
     __tablename__ = "department_sections"
@@ -24,6 +25,20 @@ class DepartmentSection(Base):
     order_index = Column(Integer, default=0)
     
     department = relationship("Department", back_populates="sections")
+
+class Faculty(Base):
+    __tablename__ = "faculties"
+    id = Column(Integer, primary_key=True, index=True)
+    dept_id = Column(Integer, ForeignKey("departments.id", ondelete="CASCADE"))
+    name = Column(String(255), nullable=False)
+    designation = Column(String(255))
+    email = Column(String(255))
+    specialization = Column(Text)
+    image_url = Column(Text)
+    is_former = Column(Integer, default=0) # 0 for Current, 1 for Former
+    order_index = Column(Integer, default=0)
+
+    department = relationship("Department", back_populates="faculties")
 
 class DepartmentNavLink(Base):
     __tablename__ = "department_nav_links"

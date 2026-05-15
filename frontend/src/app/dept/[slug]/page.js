@@ -7,6 +7,7 @@ import MainHeader from '@/components/MainHeader';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DeptNavbar from '@/components/DeptNavbar';
+import FacultySection from '@/components/FacultySection';
 
 export default function DeptPage() {
   const { slug } = useParams();
@@ -127,6 +128,10 @@ export default function DeptPage() {
           </div>
 
           <div className={`space-y-12 ${isSyllabusTab ? 'bg-white rounded-[35px] border border-gray-200 p-6 shadow-sm mb-8' : ''}`}>
+            {activeTab === 'faculty' && dept.faculties && (
+              <FacultySection faculties={dept.faculties} />
+            )}
+
             {dept.sections && dept.sections
               .filter(section => section.category === activeTab)
               .map((section, idx) => {
