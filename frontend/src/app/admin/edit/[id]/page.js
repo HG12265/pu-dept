@@ -41,7 +41,7 @@ export default function EditDepartment() {
   const [activeSection, setActiveSection] = useState(null);
   const [activeFaculty, setActiveFaculty] = useState(null);
   const [facultyFormData, setFacultyFormData] = useState({ 
-    name: '', designation: '', email: '', specialization: '', is_former: 0, order: 0, image_url: '' 
+    name: '', designation: '', email: '', specialization: '', is_former: 0, order_index: 0, image_url: '', profile_url: '' 
   });
   const [facultyImageFile, setFacultyImageFile] = useState(null);
 
@@ -184,7 +184,7 @@ export default function EditDepartment() {
       if (res.ok) {
         setView('faculty-manager');
         setActiveFaculty(null);
-        setFacultyFormData({ name: '', designation: '', email: '', specialization: '', is_former: 0, order: 0, image_url: '' });
+        setFacultyFormData({ name: '', designation: '', email: '', specialization: '', is_former: 0, order_index: 0, image_url: '', profile_url: '' });
         setFacultyImageFile(null);
         fetchDeptDetails();
       }
@@ -311,7 +311,7 @@ export default function EditDepartment() {
                 <button
                   onClick={() => { 
                     setActiveFaculty({}); 
-                    setFacultyFormData({ name: '', designation: '', email: '', specialization: '', is_former: 0, order: 0, image_url: '' });
+                    setFacultyFormData({ name: '', designation: '', email: '', specialization: '', is_former: 0, order_index: 0, image_url: '', profile_url: '' });
                     setView('faculty-editor'); 
                   }}
                   className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-700 transition cursor-pointer border-none"
@@ -325,7 +325,14 @@ export default function EditDepartment() {
                   <div key={f.id} className="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm hover:shadow-md transition">
                     <div className="flex items-center gap-4">
                        <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden">
-                          {f.image_url ? <img src={f.image_url} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300">👤</div>}
+                          {f.image_url ? (
+                            <img 
+                              src={f.image_url.startsWith('http') ? f.image_url : `${apiUrl.replace('/api', '')}${f.image_url}`} 
+                              className="w-full h-full object-cover" 
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-300">👤</div>
+                          )}
                        </div>
                        <div>
                           <h4 className="m-0 font-bold text-gray-800">{f.name}</h4>
@@ -347,8 +354,9 @@ export default function EditDepartment() {
                             email: f.email, 
                             specialization: f.specialization, 
                             is_former: f.is_former, 
-                            order: f.order_index,
-                            image_url: f.image_url
+                            order_index: f.order_index,
+                            image_url: f.image_url,
+                            profile_url: f.profile_url
                           });
                           setView('faculty-editor'); 
                         }}
@@ -421,18 +429,23 @@ export default function EditDepartment() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
-                                const yearBar = `<div style="background-color: #17a2b8; color: white; padding: 12px; font-weight: bold; text-align: center; margin: 25px 0; font-family: sans-serif; border-radius: 4px; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">2023 - 2024 ONWARDS</div>`;
-                                setActiveSection({ ...activeSection, content: activeSection.content + yearBar });
+                                const yearHeader = `<tr style="background-color: #17a2b8; border-bottom: 1px solid #333;"><td colspan="3" style="padding: 12px; color: white; font-weight: bold; text-align: center; font-family: sans-serif; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">2023 - 2024 ONWARDS</td></tr>`;
+                                if (activeSection.content.toLowerCase().includes('</tbody>')) {
+                                  let newContent = activeSection.content.replace(/<\/tbody>/i, yearHeader + '</tbody>');
+                                  setActiveSection({ ...activeSection, content: newContent });
+                                } else {
+                                  alert('Please insert a Syllabus Table first!');
+                                }
                               }}
                               className="px-4 py-2 bg-teal-500 text-white rounded-lg text-xs font-bold hover:bg-teal-600 transition border-none cursor-pointer shadow-sm"
-                            >+ Add Year Header</button>
+                            >+ Add Year Header Row</button>
                             <button
                               onClick={() => {
-                                const template = `<table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-family: sans-serif;"><thead><tr style="border-bottom: 2px solid #eee;"><th style="padding: 12px; text-align: left; width: 10%; font-weight: bold; color: #333;">S.No</th><th style="padding: 12px; text-align: left; width: 70%; font-weight: bold; color: #333;">PROGRAMMES</th><th style="padding: 12px; text-align: right; width: 20%; font-weight: bold; color: #333;">DETAILS</th></tr></thead><tbody></tbody></table>`;
+                                const template = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: sans-serif; border: 1px solid #333;"><thead><tr style="background-color: #fff; border-bottom: 1px solid #333;"><th style="padding: 12px; text-align: center; width: 10%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; border-right: 1px solid #333;">S.No</th><th style="padding: 12px; text-align: left; width: 70%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; border-right: 1px solid #333;">PROGRAMMES</th><th style="padding: 12px; text-align: center; width: 20%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase;">DETAILS</th></tr></thead><tbody><tr style="background-color: #17a2b8; border-bottom: 1px solid #333;"><td colspan="3" style="padding: 12px; color: white; font-weight: bold; text-align: center; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">2023 - 2024 ONWARDS</td></tr></tbody></table>`;
                                 setActiveSection({ ...activeSection, content: activeSection.content + template });
                               }}
                               className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-bold hover:bg-black transition border-none cursor-pointer shadow-sm"
-                            >+ Insert New Table</button>
+                            >+ Insert Syllabus Table</button>
                           </div>
                         </div>
 
@@ -447,7 +460,15 @@ export default function EditDepartment() {
                           </div>
                           <div className="w-64">
                             <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Syllabus PDF File</label>
-                            <input type="file" accept=".pdf" onChange={(e) => setSyllabusFormData({...syllabusFormData, file: e.target.files[0]})} className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg bg-white file:hidden" />
+                            <div className="flex gap-2">
+                              <input type="file" accept=".pdf" onChange={(e) => setSyllabusFormData({...syllabusFormData, file: e.target.files[0]})} className="flex-1 p-2 text-xs border-2 border-gray-200 rounded-lg bg-white file:hidden" />
+                              {syllabusFormData.file && (
+                                <button
+                                  onClick={() => window.open(URL.createObjectURL(syllabusFormData.file))}
+                                  className="px-2 py-1 bg-red-50 text-red-600 rounded border border-red-200 text-[10px] font-bold hover:bg-red-100 transition"
+                                >PREVIEW</button>
+                              )}
+                            </div>
                           </div>
                           <button onClick={async () => {
                             if (!syllabusFormData.sno || !syllabusFormData.title || !syllabusFormData.file) { alert('Please fill all fields and select a PDF!'); return; }
@@ -457,7 +478,7 @@ export default function EditDepartment() {
                               const base = apiUrl.replace('/api', '');
                               const res = await fetch(`${apiUrl}/admin/upload`, { method: 'POST', body: formData });
                               const data = await res.json();
-                              const newRow = `<tr style="border-bottom: 1px solid #f2f2f2;"><td style="padding: 15px 12px; color: #444; font-size: 14px;">${syllabusFormData.sno}</td><td style="padding: 15px 12px; color: #333; font-weight: 500; font-size: 14px;">${syllabusFormData.title}</td><td style="padding: 15px 12px; text-align: right;"><a href="${base}${data.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none; font-size: 13px; text-transform: uppercase;">SYLLABUS</a></td></tr>`;
+                              const newRow = `<tr style="background-color: #fafafa; border-bottom: 1px solid #333;"><td style="padding: 12px; color: #444; font-size: 14px; border-right: 1px solid #333; text-align: center;">${syllabusFormData.sno}</td><td style="padding: 12px; color: #333; font-weight: 500; font-size: 14px; border-right: 1px solid #333;">${syllabusFormData.title}</td><td style="padding: 12px; text-align: center;"><a href="${base}${data.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none; font-size: 14px; text-transform: uppercase;">SYLLABUS</a></td></tr>`;
                               if (activeSection.content.toLowerCase().includes('</tbody>')) {
                                 let newContent = activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>');
                                 setActiveSection({ ...activeSection, content: newContent }); setSyllabusFormData({ sno: '', title: '', file: null }); alert('✓ New Row Added to Table!');
@@ -501,29 +522,33 @@ export default function EditDepartment() {
                    <div className="space-y-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Name</label>
-                        <input type="text" value={facultyFormData.name} onChange={(e) => setFacultyFormData({...facultyFormData, name: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Dr. S. Kadhiravan" />
+                        <input type="text" value={facultyFormData.name || ''} onChange={(e) => setFacultyFormData({...facultyFormData, name: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Dr. S. Kadhiravan" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Designation</label>
-                        <input type="text" value={facultyFormData.designation} onChange={(e) => setFacultyFormData({...facultyFormData, designation: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Professor and Head" />
+                        <input type="text" value={facultyFormData.designation || ''} onChange={(e) => setFacultyFormData({...facultyFormData, designation: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Professor and Head" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Email Address</label>
-                        <input type="email" value={facultyFormData.email} onChange={(e) => setFacultyFormData({...facultyFormData, email: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. email@periyaruniversity.ac.in" />
+                        <input type="email" value={facultyFormData.email || ''} onChange={(e) => setFacultyFormData({...facultyFormData, email: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. email@periyaruniversity.ac.in" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Type</label>
-                        <select value={facultyFormData.is_former} onChange={(e) => setFacultyFormData({...facultyFormData, is_former: parseInt(e.target.value)})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white">
+                        <select value={facultyFormData.is_former || 0} onChange={(e) => setFacultyFormData({...facultyFormData, is_former: parseInt(e.target.value)})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white">
                           <option value={0}>Current Faculty</option>
                           <option value={1}>Former Faculty</option>
                         </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Display Order (Lower numbers first)</label>
+                        <input type="number" value={facultyFormData.order_index || 0} onChange={(e) => setFacultyFormData({...facultyFormData, order_index: parseInt(e.target.value)})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="0" />
                       </div>
                    </div>
 
                    <div className="space-y-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Area of Specialization</label>
-                        <textarea value={facultyFormData.specialization} onChange={(e) => setFacultyFormData({...facultyFormData, specialization: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none min-h-[120px]" placeholder="e.g. Psychology, Counselling..." />
+                        <textarea value={facultyFormData.specialization || ''} onChange={(e) => setFacultyFormData({...facultyFormData, specialization: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none min-h-[120px]" placeholder="e.g. Psychology, Counselling..." />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Photo</label>
@@ -547,6 +572,10 @@ export default function EditDepartment() {
                               <p className="mt-1 text-[10px] text-gray-400 font-medium tracking-tight uppercase">Recommended: 300x400px (Portrait)</p>
                            </div>
                         </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Profile URL (Link to Profile)</label>
+                        <input type="text" value={facultyFormData.profile_url || ''} onChange={(e) => setFacultyFormData({...facultyFormData, profile_url: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="https://faculty.periyaruniversity.ac.in/faculty/profile?id=..." />
                       </div>
                    </div>
                 </div>

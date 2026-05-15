@@ -127,7 +127,7 @@ export default function DeptPage() {
             </h2>
           </div>
 
-          <div className={`space-y-12 ${isSyllabusTab ? 'bg-white rounded-[35px] border border-gray-200 p-6 shadow-sm mb-8' : ''}`}>
+          <div className="space-y-12 mb-8">
             {activeTab === 'faculty' && dept.faculties && (
               <FacultySection faculties={dept.faculties} />
             )}

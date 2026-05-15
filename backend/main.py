@@ -148,6 +148,7 @@ class FacultyCreate(BaseModel):
     email: str = None
     specialization: str = None
     image_url: str = None
+    profile_url: str = None
     is_former: int = 0
     order: int = 0
 
@@ -157,6 +158,7 @@ class FacultyUpdate(BaseModel):
     email: str = None
     specialization: str = None
     image_url: str = None
+    profile_url: str = None
     is_former: int = None
     order: int = None
 
@@ -229,6 +231,7 @@ def add_faculty(data: FacultyCreate, db: Session = Depends(get_db)):
         email=data.email,
         specialization=data.specialization,
         image_url=data.image_url,
+        profile_url=data.profile_url,
         is_former=data.is_former,
         order_index=data.order
     )
@@ -248,6 +251,7 @@ def update_faculty(faculty_id: int, data: FacultyUpdate, db: Session = Depends(g
     if data.email is not None: faculty.email = data.email
     if data.specialization is not None: faculty.specialization = data.specialization
     if data.image_url is not None: faculty.image_url = data.image_url
+    if data.profile_url is not None: faculty.profile_url = data.profile_url
     if data.is_former is not None: faculty.is_former = data.is_former
     if data.order is not None: faculty.order_index = data.order
     

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const FacultyCard = ({ faculty }) => {
-  const { name, designation, email, specialization, image_url } = faculty;
+  const { name, designation, email, specialization, image_url, profile_url } = faculty;
 
   // Handle image URL - if it's a relative path from the backend, prefix it
   const getImageUrl = (url) => {
@@ -64,12 +64,18 @@ const FacultyCard = ({ faculty }) => {
           </div>
         </div>
 
-        <div className="self-end mt-4">
-          <button className="text-[#990033] font-bold text-[13px] uppercase tracking-wider flex items-center gap-1 group hover:text-[#7a0000] transition-colors">
-            View More..
-            <span className="group-hover:translate-x-1 transition-transform">→</span>
-          </button>
-        </div>
+        {profile_url && (
+          <div className="flex justify-end mt-4 pt-2 border-t border-gray-50">
+            <a 
+              href={profile_url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#990033] font-bold text-[14px] hover:underline"
+            >
+              View More..
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

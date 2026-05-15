@@ -35,6 +35,7 @@ class Faculty(Base):
     email = Column(String(255))
     specialization = Column(Text)
     image_url = Column(Text)
+    profile_url = Column(Text)
     is_former = Column(Integer, default=0) # 0 for Current, 1 for Former
     order_index = Column(Integer, default=0)
 
