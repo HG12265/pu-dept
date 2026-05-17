@@ -141,135 +141,90 @@ body {
   width: 100%;
 }
 
-.syllabus-content .syllabus-year-row {
-  margin: 1.5rem 0 0.75rem;
-  padding: 0.95rem 1rem;
-  background-color: #0f7e8a;
-  color: #ffffff;
-  font-weight: 700;
-  text-align: center;
-  border-radius: 18px;
+.syllabus-content table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  margin-top: 20px;
+  border: none !important;
+  border-radius: 0 !important;
 }
 
-.syllabus-content table.syllabus-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 0.75rem;
-  border: 1px solid #dcdcdc;
-  border-radius: 24px;
-  overflow: hidden;
+.syllabus-content th:nth-child(1),
+.syllabus-content td:nth-child(1) {
+  width: 15% !important;
 }
 
-.syllabus-content div[style*="background-color: #17a2b8"] {
-  margin: 1.5rem 0 0.75rem;
-  padding: 0.95rem 1rem;
-  background-color: #0f7e8a;
-  color: #ffffff;
-  font-weight: 700;
-  text-align: center;
-  border-radius: 18px;
+.syllabus-content th:nth-child(2),
+.syllabus-content td:nth-child(2) {
+  width: 65% !important;
 }
 
-.syllabus-content table[style*="border-collapse: collapse"] {
-  width: 100%;
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-  margin-top: 0.75rem;
-  border: 1px solid #dcdcdc;
-  border-radius: 24px;
-  overflow: hidden;
-}
-
-.syllabus-content table[style*="border-collapse: collapse"] th,
-.syllabus-content table[style*="border-collapse: collapse"] td {
-  border-bottom: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  padding: 1rem 1.1rem;
-  vertical-align: middle;
-  text-align: left;
-  font-size: 0.95rem;
-}
-
-.syllabus-content table[style*="border-collapse: collapse"] th:last-child,
-.syllabus-content table[style*="border-collapse: collapse"] td:last-child {
-  border-right: none;
-  text-align: right;
-}
-
-.syllabus-content table[style*="border-collapse: collapse"] tbody tr:nth-child(odd) {
-  background-color: #ffffff;
-}
-
-.syllabus-content table[style*="border-collapse: collapse"] tbody tr:nth-child(even) {
-  background-color: #f9fafb;
-}
-
-.syllabus-content table[style*="border-collapse: collapse"] tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.syllabus-content table[style*="border-collapse: collapse"] thead th {
-  background-color: #f8fafc;
-  color: #111827;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.78rem;
-}
-
-.syllabus-content thead tr {
-  background-color: #f8fafc;
+.syllabus-content th:nth-child(3),
+.syllabus-content td:nth-child(3) {
+  width: 20% !important;
 }
 
 .syllabus-content th,
 .syllabus-content td {
-  border-bottom: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  padding: 1rem 1.1rem;
-  vertical-align: middle;
+  padding: 15px 12px !important;
   text-align: left;
-  font-size: 0.95rem;
+  border: none !important;
+  word-wrap: break-word;
 }
 
-.syllabus-content table.syllabus-table thead th {
-  background-color: #f8fafc;
-  color: #111827;
-  font-weight: 700;
+.syllabus-content thead tr {
+  border-bottom: 2px solid #eee !important;
+  background-color: #fff !important;
+}
+
+.syllabus-content thead th {
+  color: #333 !important;
+  font-weight: bold !important;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.78rem;
+  background-color: transparent !important;
 }
 
-.syllabus-content table.syllabus-table tbody tr:last-child td {
-  border-bottom: none;
+.syllabus-content tbody tr {
+  border-bottom: 1px solid #eee !important;
 }
 
-.syllabus-content .syllabus-year-row + .syllabus-table {
-  margin-top: 0.5rem;
+/* Force the entire row to have the teal background if it contains the teal color */
+.syllabus-content tbody tr:has([style*="1fa2b8"]),
+.syllabus-content tbody tr:has([style*="31, 162, 184"]) {
+  background-color: #1fa2b8 !important;
+  border-bottom: none !important;
 }
 
-.syllabus-content th:last-child,
-.syllabus-content td:last-child {
-  border-right: none;
+/* Force the td to be transparent so the tr color shows, or force td to teal */
+.syllabus-content tbody tr:has([style*="1fa2b8"]) td,
+.syllabus-content tbody tr:has([style*="31, 162, 184"]) td {
+  background-color: #1fa2b8 !important;
+  border: none !important;
 }
 
-.syllabus-content tbody tr:nth-child(odd) {
-  background-color: #ffffff;
+/* Center the text in the middle column for the year row */
+.syllabus-content tbody tr:has([style*="1fa2b8"]) td:nth-child(2),
+.syllabus-content tbody tr:has([style*="31, 162, 184"]) td:nth-child(2),
+.syllabus-content tbody tr:has([style*="1fa2b8"]) td:nth-child(2) *,
+.syllabus-content tbody tr:has([style*="31, 162, 184"]) td:nth-child(2) * {
+  text-align: center !important;
+  color: #333 !important;
+  font-weight: bold !important;
 }
 
-.syllabus-content tbody tr:nth-child(even) {
-  background-color: #f9fafb;
+.syllabus-content tbody tr:last-child {
+  border-bottom: none !important;
 }
 
 .syllabus-content a {
-  color: #c70440;
-  text-decoration: none;
-  font-weight: 700;
+  color: #cc0000 !important;
+  text-decoration: none !important;
+  font-weight: normal !important;
 }
 
 .syllabus-content a:hover {
-  text-decoration: underline;
+  text-decoration: underline !important;
 }
 
 .syllabus-content p,

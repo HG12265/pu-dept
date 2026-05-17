@@ -41,8 +41,8 @@ export default function EditDepartment() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
   const [activeFaculty, setActiveFaculty] = useState(null);
-  const [facultyFormData, setFacultyFormData] = useState({ 
-    name: '', designation: '', email: '', specialization: '', is_former: 0, order_index: 0, image_url: '', profile_url: '' 
+  const [facultyFormData, setFacultyFormData] = useState({
+    name: '', designation: '', email: '', specialization: '', is_former: 0, order_index: 0, image_url: '', profile_url: ''
   });
   const [facultyImageFile, setFacultyImageFile] = useState(null);
 
@@ -155,17 +155,17 @@ export default function EditDepartment() {
 
     // If a new image file is selected, upload it first
     if (facultyImageFile) {
-        const formData = new FormData();
-        formData.append('file', facultyImageFile);
-        formData.append('folder', 'faculties');
-        try {
-            const upRes = await fetch(`${apiUrl}/admin/upload?folder=faculties`, {
-                method: 'POST',
-                body: formData
-            });
-            const upData = await upRes.json();
-            finalImageUrl = upData.url;
-        } catch (err) { alert('Image upload failed'); setUploading(false); return; }
+      const formData = new FormData();
+      formData.append('file', facultyImageFile);
+      formData.append('folder', 'faculties');
+      try {
+        const upRes = await fetch(`${apiUrl}/admin/upload?folder=faculties`, {
+          method: 'POST',
+          body: formData
+        });
+        const upData = await upRes.json();
+        finalImageUrl = upData.url;
+      } catch (err) { alert('Image upload failed'); setUploading(false); return; }
     }
 
     const isUpdate = activeFaculty?.id;
@@ -236,10 +236,10 @@ export default function EditDepartment() {
               {categories.map((cat) => (
                 <div
                   key={cat.slug}
-                  onClick={() => { 
-                    setActiveCategory(cat); 
+                  onClick={() => {
+                    setActiveCategory(cat);
                     if (cat.slug === 'faculty') setView('faculty-manager');
-                    else setView('category'); 
+                    else setView('category');
                   }}
                   className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl hover:border-blue-400 transition-all flex flex-col items-center text-center group"
                 >
@@ -310,10 +310,10 @@ export default function EditDepartment() {
               <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100">
                 <h2 className="text-lg font-bold text-gray-700 m-0">Faculty Management</h2>
                 <button
-                  onClick={() => { 
-                    setActiveFaculty({}); 
+                  onClick={() => {
+                    setActiveFaculty({});
                     setFacultyFormData({ name: '', designation: '', email: '', specialization: '', is_former: 0, order_index: 0, image_url: '', profile_url: '' });
-                    setView('faculty-editor'); 
+                    setView('faculty-editor');
                   }}
                   className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-700 transition cursor-pointer border-none"
                 >
@@ -325,41 +325,41 @@ export default function EditDepartment() {
                 {dept.faculties?.map(f => (
                   <div key={f.id} className="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm hover:shadow-md transition">
                     <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden">
-                          {f.image_url ? (
-                            <img 
-                              src={f.image_url.startsWith('http') ? f.image_url : `${apiUrl.replace('/api', '')}${f.image_url}`} 
-                              className="w-full h-full object-cover" 
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-300">👤</div>
-                          )}
-                       </div>
-                       <div>
-                          <h4 className="m-0 font-bold text-gray-800">{f.name}</h4>
-                          <div className="text-xs text-gray-400 mt-1 uppercase font-bold flex gap-2">
-                             <span>{f.designation}</span>
-                             <span className={`px-2 rounded-full ${f.is_former ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}`}>
-                                {f.is_former ? 'Former' : 'Current'}
-                             </span>
-                          </div>
-                       </div>
+                      <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden">
+                        {f.image_url ? (
+                          <img
+                            src={f.image_url.startsWith('http') ? f.image_url : `${apiUrl.replace('/api', '')}${f.image_url}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-300">👤</div>
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="m-0 font-bold text-gray-800">{f.name}</h4>
+                        <div className="text-xs text-gray-400 mt-1 uppercase font-bold flex gap-2">
+                          <span>{f.designation}</span>
+                          <span className={`px-2 rounded-full ${f.is_former ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}`}>
+                            {f.is_former ? 'Former' : 'Current'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => { 
-                          setActiveFaculty(f); 
-                          setFacultyFormData({ 
-                            name: f.name, 
-                            designation: f.designation, 
-                            email: f.email, 
-                            specialization: f.specialization, 
-                            is_former: f.is_former, 
+                        onClick={() => {
+                          setActiveFaculty(f);
+                          setFacultyFormData({
+                            name: f.name,
+                            designation: f.designation,
+                            email: f.email,
+                            specialization: f.specialization,
+                            is_former: f.is_former,
                             order_index: f.order_index,
                             image_url: f.image_url,
                             profile_url: f.profile_url
                           });
-                          setView('faculty-editor'); 
+                          setView('faculty-editor');
                         }}
                         className="bg-blue-50 text-blue-600 px-4 py-2 rounded font-bold hover:bg-blue-600 hover:text-white transition cursor-pointer border-none"
                       >
@@ -417,7 +417,7 @@ export default function EditDepartment() {
                       />
                     </div>
                   )}
-                  
+
                   <div className={`${(activeCategory?.slug === 'syllabus' || activeCategory?.slug === 'programmes') ? 'w-full' : 'w-1/3'}`}>
                     {activeCategory?.slug === 'syllabus' ? (
                       <div className="w-full p-6 bg-white rounded-2xl shadow-sm border-2 border-blue-50 border-dashed">
@@ -430,7 +430,9 @@ export default function EditDepartment() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
-                                const yearHeader = `<tr style="background-color: #17a2b8; border-bottom: 1px solid #333;"><td colspan="3" style="padding: 12px; color: white; font-weight: bold; text-align: center; font-family: sans-serif; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">2023 - 2024 ONWARDS</td></tr>`;
+                                const userYear = window.prompt("Enter Year Header (e.g. 2023 - 2024 ONWARDS):", "2023 - 2024 ONWARDS");
+                                if (!userYear) return;
+                                const yearHeader = `<tr style="background-color: #1fa2b8;"><td style="padding: 12px; background-color: #1fa2b8; border:none;">&nbsp;</td><td style="padding: 12px; background-color: #1fa2b8; color: #333; font-weight: bold; text-align: center; font-family: sans-serif; text-transform: uppercase; font-size: 14px; border:none;">${userYear}</td><td style="padding: 12px; background-color: #1fa2b8; border:none;">&nbsp;</td></tr>`;
                                 if (activeSection.content.toLowerCase().includes('</tbody>')) {
                                   let newContent = activeSection.content.replace(/<\/tbody>/i, yearHeader + '</tbody>');
                                   setActiveSection({ ...activeSection, content: newContent });
@@ -442,7 +444,7 @@ export default function EditDepartment() {
                             >+ Add Year Header Row</button>
                             <button
                               onClick={() => {
-                                const template = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: sans-serif; border: 1px solid #333;"><thead><tr style="background-color: #fff; border-bottom: 1px solid #333;"><th style="padding: 12px; text-align: center; width: 10%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; border-right: 1px solid #333;">S.No</th><th style="padding: 12px; text-align: left; width: 70%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; border-right: 1px solid #333;">PROGRAMMES</th><th style="padding: 12px; text-align: center; width: 20%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase;">DETAILS</th></tr></thead><tbody><tr style="background-color: #17a2b8; border-bottom: 1px solid #333;"><td colspan="3" style="padding: 12px; color: white; font-weight: bold; text-align: center; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">2023 - 2024 ONWARDS</td></tr></tbody></table>`;
+                                const template = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: sans-serif; border: none;"><tbody><tr style="background-color: #fff; border-bottom: 2px solid #eee;"><td style="padding: 15px 12px; text-align: left; width: 15%; font-weight: bold; color: #333; font-size: 15px; text-transform: uppercase;">S.No</td><td style="padding: 15px 12px; text-align: left; width: 65%; font-weight: bold; color: #333; font-size: 15px; text-transform: uppercase;">PROGRAMMES</td><td style="padding: 15px 12px; text-align: left; width: 20%; font-weight: bold; color: #333; font-size: 15px; text-transform: uppercase;">DETAILS</td></tr></tbody></table>`;
                                 setActiveSection({ ...activeSection, content: activeSection.content + template });
                               }}
                               className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-bold hover:bg-black transition border-none cursor-pointer shadow-sm"
@@ -453,16 +455,16 @@ export default function EditDepartment() {
                         <div className="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100">
                           <div className="w-20">
                             <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">S.No</label>
-                            <input type="text" value={syllabusFormData.sno} onChange={(e) => setSyllabusFormData({...syllabusFormData, sno: e.target.value})} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white transition-all font-bold text-center" placeholder="1" />
+                            <input type="text" value={syllabusFormData.sno} onChange={(e) => setSyllabusFormData({ ...syllabusFormData, sno: e.target.value })} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white transition-all font-bold text-center" placeholder="1" />
                           </div>
                           <div className="flex-1">
                             <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Programme Name</label>
-                            <input type="text" value={syllabusFormData.title} onChange={(e) => setSyllabusFormData({...syllabusFormData, title: e.target.value})} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white transition-all" placeholder="e.g. M.Sc. Biochemistry (2024-25)" />
+                            <input type="text" value={syllabusFormData.title} onChange={(e) => setSyllabusFormData({ ...syllabusFormData, title: e.target.value })} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white transition-all" placeholder="e.g. M.Sc. Biochemistry (2024-25)" />
                           </div>
                           <div className="w-64">
                             <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Syllabus PDF File</label>
                             <div className="flex gap-2">
-                              <input type="file" accept=".pdf" onChange={(e) => setSyllabusFormData({...syllabusFormData, file: e.target.files[0]})} className="flex-1 p-2 text-xs border-2 border-gray-200 rounded-lg bg-white file:hidden" />
+                              <input type="file" accept=".pdf" onChange={(e) => setSyllabusFormData({ ...syllabusFormData, file: e.target.files[0] })} className="flex-1 p-2 text-xs border-2 border-gray-200 rounded-lg bg-white file:hidden" />
                               {syllabusFormData.file && (
                                 <button
                                   onClick={() => window.open(URL.createObjectURL(syllabusFormData.file))}
@@ -479,7 +481,9 @@ export default function EditDepartment() {
                               const base = apiUrl.replace('/api', '');
                               const res = await fetch(`${apiUrl}/admin/upload`, { method: 'POST', body: formData });
                               const data = await res.json();
-                              const newRow = `<tr style="background-color: #fafafa; border-bottom: 1px solid #333;"><td style="padding: 12px; color: #444; font-size: 14px; border-right: 1px solid #333; text-align: center;">${syllabusFormData.sno}</td><td style="padding: 12px; color: #333; font-weight: 500; font-size: 14px; border-right: 1px solid #333;">${syllabusFormData.title}</td><td style="padding: 12px; text-align: center;"><a href="${base}${data.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none; font-size: 14px; text-transform: uppercase;">SYLLABUS</a></td></tr>`;
+                              const isEven = activeSection.content.split('SYLLABUS').length % 2 === 0;
+                              const rowBg = isEven ? '#f9f9f9' : '#fff';
+                              const newRow = `<tr style="background-color: ${rowBg}; border-bottom: 1px solid #eee;"><td style="padding: 15px 12px; color: #555; font-size: 14px; text-align: left;">${syllabusFormData.sno}</td><td style="padding: 15px 12px; color: #333; font-size: 14px; text-align: left;">${syllabusFormData.title}</td><td style="padding: 15px 12px; text-align: left;"><a href="${base}${data.url}" target="_blank" style="color: #cc0000; font-weight: normal; text-decoration: none; font-size: 14px; text-transform: uppercase;">SYLLABUS</a></td></tr>`;
                               if (activeSection.content.toLowerCase().includes('</tbody>')) {
                                 let newContent = activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>');
                                 setActiveSection({ ...activeSection, content: newContent }); setSyllabusFormData({ sno: '', title: '', file: null }); alert('✓ New Row Added to Table!');
@@ -509,47 +513,47 @@ export default function EditDepartment() {
                           <div className="flex gap-4 items-start">
                             <div className="w-1/3">
                               <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Programme Name</label>
-                              <input type="text" value={programmeFormData.name} onChange={(e) => setProgrammeFormData({...programmeFormData, name: e.target.value})} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-purple-400 focus:outline-none bg-white transition-all" placeholder="e.g. M.Sc. (Biotechnology)" />
+                              <input type="text" value={programmeFormData.name} onChange={(e) => setProgrammeFormData({ ...programmeFormData, name: e.target.value })} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-purple-400 focus:outline-none bg-white transition-all" placeholder="e.g. M.Sc. (Biotechnology)" />
                             </div>
                             <div className="flex-1">
                               <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Eligibility</label>
-                              <textarea value={programmeFormData.eligibility} onChange={(e) => setProgrammeFormData({...programmeFormData, eligibility: e.target.value})} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-purple-400 focus:outline-none bg-white transition-all min-h-[46px]" placeholder="Candidate who has passed..." />
+                              <textarea value={programmeFormData.eligibility} onChange={(e) => setProgrammeFormData({ ...programmeFormData, eligibility: e.target.value })} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-purple-400 focus:outline-none bg-white transition-all min-h-[46px]" placeholder="Candidate who has passed..." />
                             </div>
                           </div>
-                          
-                          {/* Links Row */}
+
+                          {/* Links row */}
                           <div className="flex gap-4 items-end bg-white p-3 rounded-lg border border-gray-200">
                             <div className="w-1/2 flex gap-2 items-end border-r pr-4">
-                                <div className="flex-1">
-                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 1 Label (Optional)</label>
-                                  <input type="text" value={programmeFormData.link1Text} onChange={(e) => setProgrammeFormData({...programmeFormData, link1Text: e.target.value})} className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg focus:border-purple-400 bg-white" placeholder="e.g. University Regulations" />
-                                </div>
-                                <div className="flex-1">
-                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 1 PDF</label>
-                                  <input type="file" accept=".pdf" onChange={(e) => setProgrammeFormData({...programmeFormData, link1File: e.target.files[0]})} className="w-full p-1.5 text-[10px] border-2 border-gray-200 rounded-lg bg-white" />
-                                </div>
+                              <div className="flex-1">
+                                <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 1 Label (Optional)</label>
+                                <input type="text" value={programmeFormData.link1Text} onChange={(e) => setProgrammeFormData({ ...programmeFormData, link1Text: e.target.value })} className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg focus:border-purple-400 bg-white" placeholder="e.g. University Regulations" />
+                              </div>
+                              <div className="flex-1">
+                                <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 1 PDF</label>
+                                <input type="file" accept=".pdf" onChange={(e) => setProgrammeFormData({ ...programmeFormData, link1File: e.target.files[0] })} className="w-full p-1.5 text-[10px] border-2 border-gray-200 rounded-lg bg-white" />
+                              </div>
                             </div>
                             <div className="w-1/2 flex gap-2 items-end pl-2">
-                                <div className="flex-1">
-                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 2 Label (Optional)</label>
-                                  <input type="text" value={programmeFormData.link2Text} onChange={(e) => setProgrammeFormData({...programmeFormData, link2Text: e.target.value})} className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg focus:border-purple-400 bg-white" placeholder="e.g. Brochure" />
-                                </div>
-                                <div className="flex-1">
-                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 2 PDF</label>
-                                  <input type="file" accept=".pdf" onChange={(e) => setProgrammeFormData({...programmeFormData, link2File: e.target.files[0]})} className="w-full p-1.5 text-[10px] border-2 border-gray-200 rounded-lg bg-white" />
-                                </div>
+                              <div className="flex-1">
+                                <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 2 Label (Optional)</label>
+                                <input type="text" value={programmeFormData.link2Text} onChange={(e) => setProgrammeFormData({ ...programmeFormData, link2Text: e.target.value })} className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg focus:border-purple-400 bg-white" placeholder="e.g. Brochure" />
+                              </div>
+                              <div className="flex-1">
+                                <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 2 PDF</label>
+                                <input type="file" accept=".pdf" onChange={(e) => setProgrammeFormData({ ...programmeFormData, link2File: e.target.files[0] })} className="w-full p-1.5 text-[10px] border-2 border-gray-200 rounded-lg bg-white" />
+                              </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex justify-end mt-2">
                             <button onClick={async () => {
                               if (!programmeFormData.name) { alert('Please enter a Programme Name!'); return; }
                               setUploading(true);
                               let eligibilityHtml = programmeFormData.eligibility.replace(/\n/g, '<br/>');
-                              
+
                               const base = apiUrl.replace('/api', '');
                               let linksHtml = '';
-                              
+
                               if (programmeFormData.link1Text && programmeFormData.link1File) {
                                 const fd1 = new FormData(); fd1.append('file', programmeFormData.link1File);
                                 try {
@@ -560,7 +564,7 @@ export default function EditDepartment() {
                               } else if (programmeFormData.link1Text && !programmeFormData.link1File) {
                                 alert("Please select a PDF file for Link 1"); setUploading(false); return;
                               }
-                              
+
                               if (programmeFormData.link2Text && programmeFormData.link2File) {
                                 const fd2 = new FormData(); fd2.append('file', programmeFormData.link2File);
                                 try {
@@ -571,24 +575,24 @@ export default function EditDepartment() {
                               } else if (programmeFormData.link2Text && !programmeFormData.link2File) {
                                 alert("Please select a PDF file for Link 2"); setUploading(false); return;
                               }
-                              
+
                               if (linksHtml) {
                                 eligibilityHtml += (eligibilityHtml ? '<br/><br/>' : '') + linksHtml;
                               }
-                              
+
                               const newRow = `<tr><td style="padding: 15px 12px; border-bottom: 1px solid #eee; color: #444; font-size: 14px; vertical-align: top; width: 35%; white-space: normal; word-wrap: break-word;">${programmeFormData.name}</td><td style="padding: 15px 12px; border-bottom: 1px solid #eee; color: #555; font-size: 14px; vertical-align: top; line-height: 1.6; width: 65%; white-space: normal; word-wrap: break-word;">${eligibilityHtml}</td></tr>`;
                               if (activeSection.content.toLowerCase().includes('</tbody>')) {
                                 let newContent = activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>');
-                                setActiveSection({ ...activeSection, content: newContent }); 
-                                setProgrammeFormData({ name: '', eligibility: '', link1Text: '', link1File: null, link2Text: '', link2File: null }); 
+                                setActiveSection({ ...activeSection, content: newContent });
+                                setProgrammeFormData({ name: '', eligibility: '', link1Text: '', link1File: null, link2Text: '', link2File: null });
                                 alert('✓ New Programme Added to Table!');
                               } else if (activeSection.content.toLowerCase().includes('</table>')) {
                                 let newContent = activeSection.content.replace(/<\/table>/i, newRow + '</table>');
-                                setActiveSection({ ...activeSection, content: newContent }); 
-                                setProgrammeFormData({ name: '', eligibility: '', link1Text: '', link1File: null, link2Text: '', link2File: null }); 
+                                setActiveSection({ ...activeSection, content: newContent });
+                                setProgrammeFormData({ name: '', eligibility: '', link1Text: '', link1File: null, link2Text: '', link2File: null });
                                 alert('✓ New Programme Added to Table!');
                               } else { alert('Please insert a Programmes Table first!'); }
-                              
+
                               setUploading(false);
                             }} disabled={uploading} className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-purple-700 transition-all cursor-pointer shadow-lg active:scale-95 whitespace-nowrap disabled:bg-gray-400">{uploading ? 'UPLOADING...' : 'ADD PROGRAMME'}</button>
                           </div>
@@ -617,74 +621,74 @@ export default function EditDepartment() {
 
           {view === 'faculty-editor' && (
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-in zoom-in-95 duration-300">
-                <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                  <button onClick={() => setView('faculty-manager')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-bold border-none bg-transparent cursor-pointer">← Back to Faculty List</button>
-                  <button onClick={handleSaveFaculty} className="bg-blue-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-blue-700 transition cursor-pointer border-none shadow-md">
-                    {activeFaculty.id ? 'Update Faculty Member' : 'Add Faculty Member'}
-                  </button>
+              <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                <button onClick={() => setView('faculty-manager')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-bold border-none bg-transparent cursor-pointer">← Back to Faculty List</button>
+                <button onClick={handleSaveFaculty} className="bg-blue-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-blue-700 transition cursor-pointer border-none shadow-md">
+                  {activeFaculty.id ? 'Update Faculty Member' : 'Add Faculty Member'}
+                </button>
+              </div>
+
+              <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Name</label>
+                    <input type="text" value={facultyFormData.name || ''} onChange={(e) => setFacultyFormData({ ...facultyFormData, name: e.target.value })} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Dr. S. Kadhiravan" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Designation</label>
+                    <input type="text" value={facultyFormData.designation || ''} onChange={(e) => setFacultyFormData({ ...facultyFormData, designation: e.target.value })} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Professor and Head" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Email Address</label>
+                    <input type="email" value={facultyFormData.email || ''} onChange={(e) => setFacultyFormData({ ...facultyFormData, email: e.target.value })} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. email@periyaruniversity.ac.in" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Type</label>
+                    <select value={facultyFormData.is_former || 0} onChange={(e) => setFacultyFormData({ ...facultyFormData, is_former: parseInt(e.target.value) })} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white">
+                      <option value={0}>Current Faculty</option>
+                      <option value={1}>Former Faculty</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Display Order (Lower numbers first)</label>
+                    <input type="number" value={facultyFormData.order_index || 0} onChange={(e) => setFacultyFormData({ ...facultyFormData, order_index: parseInt(e.target.value) })} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="0" />
+                  </div>
                 </div>
 
-                <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                   <div className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Name</label>
-                        <input type="text" value={facultyFormData.name || ''} onChange={(e) => setFacultyFormData({...facultyFormData, name: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Dr. S. Kadhiravan" />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Area of Specialization</label>
+                    <textarea value={facultyFormData.specialization || ''} onChange={(e) => setFacultyFormData({ ...facultyFormData, specialization: e.target.value })} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none min-h-[120px]" placeholder="e.g. Psychology, Counselling..." />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Photo</label>
+                    <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-lg bg-gray-50">
+                      <div className="w-16 h-16 rounded-full bg-white border border-gray-200 overflow-hidden flex items-center justify-center">
+                        {facultyImageFile ? (
+                          <img src={URL.createObjectURL(facultyImageFile)} className="w-full h-full object-cover" />
+                        ) : facultyFormData.image_url ? (
+                          <img src={facultyFormData.image_url.startsWith('http') ? facultyFormData.image_url : `${apiUrl.replace('/api', '')}${facultyFormData.image_url}`} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-2xl text-gray-200">👤</span>
+                        )}
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Designation</label>
-                        <input type="text" value={facultyFormData.designation || ''} onChange={(e) => setFacultyFormData({...facultyFormData, designation: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. Professor and Head" />
+                      <div className="flex-1">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => setFacultyImageFile(e.target.files[0])}
+                          className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                        />
+                        <p className="mt-1 text-[10px] text-gray-400 font-medium tracking-tight uppercase">Recommended: 300x400px (Portrait)</p>
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Email Address</label>
-                        <input type="email" value={facultyFormData.email || ''} onChange={(e) => setFacultyFormData({...facultyFormData, email: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="e.g. email@periyaruniversity.ac.in" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Type</label>
-                        <select value={facultyFormData.is_former || 0} onChange={(e) => setFacultyFormData({...facultyFormData, is_former: parseInt(e.target.value)})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none bg-white">
-                          <option value={0}>Current Faculty</option>
-                          <option value={1}>Former Faculty</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Display Order (Lower numbers first)</label>
-                        <input type="number" value={facultyFormData.order_index || 0} onChange={(e) => setFacultyFormData({...facultyFormData, order_index: parseInt(e.target.value)})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="0" />
-                      </div>
-                   </div>
-
-                   <div className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Area of Specialization</label>
-                        <textarea value={facultyFormData.specialization || ''} onChange={(e) => setFacultyFormData({...facultyFormData, specialization: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none min-h-[120px]" placeholder="e.g. Psychology, Counselling..." />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Photo</label>
-                        <div className="flex items-center gap-4 p-4 border border-gray-100 rounded-lg bg-gray-50">
-                           <div className="w-16 h-16 rounded-full bg-white border border-gray-200 overflow-hidden flex items-center justify-center">
-                              {facultyImageFile ? (
-                                <img src={URL.createObjectURL(facultyImageFile)} className="w-full h-full object-cover" />
-                              ) : facultyFormData.image_url ? (
-                                <img src={facultyFormData.image_url.startsWith('http') ? facultyFormData.image_url : `${apiUrl.replace('/api', '')}${facultyFormData.image_url}`} className="w-full h-full object-cover" />
-                              ) : (
-                                <span className="text-2xl text-gray-200">👤</span>
-                              )}
-                           </div>
-                           <div className="flex-1">
-                              <input 
-                                type="file" 
-                                accept="image/*" 
-                                onChange={(e) => setFacultyImageFile(e.target.files[0])}
-                                className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
-                              />
-                              <p className="mt-1 text-[10px] text-gray-400 font-medium tracking-tight uppercase">Recommended: 300x400px (Portrait)</p>
-                           </div>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Profile URL (Link to Profile)</label>
-                        <input type="text" value={facultyFormData.profile_url || ''} onChange={(e) => setFacultyFormData({...facultyFormData, profile_url: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="https://faculty.periyaruniversity.ac.in/faculty/profile?id=..." />
-                      </div>
-                   </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Faculty Profile URL (Link to Profile)</label>
+                    <input type="text" value={facultyFormData.profile_url || ''} onChange={(e) => setFacultyFormData({ ...facultyFormData, profile_url: e.target.value })} className="w-full p-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:outline-none" placeholder="https://faculty.periyaruniversity.ac.in/faculty/profile?id=..." />
+                  </div>
                 </div>
+              </div>
             </div>
           )}
         </div>
