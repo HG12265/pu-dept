@@ -34,6 +34,7 @@ export default function EditDepartment() {
   const [newSection, setNewSection] = useState({ title: '', content: '' });
   const [newLink, setNewLink] = useState({ label: '', url: '' });
   const [syllabusFormData, setSyllabusFormData] = useState({ sno: '', title: '', file: null });
+  const [programmeFormData, setProgrammeFormData] = useState({ name: '', eligibility: '', link1Text: '', link1File: null, link2Text: '', link2File: null });
 
   // New state for view management
   const [view, setView] = useState('dashboard'); // 'dashboard', 'category', 'editor'
@@ -403,8 +404,8 @@ export default function EditDepartment() {
               </div>
 
               <div className="p-8 space-y-6">
-                <div className={`${activeCategory?.slug === 'syllabus' ? 'block' : 'flex gap-4'}`}>
-                  {activeCategory?.slug !== 'syllabus' && (
+                <div className={`${(activeCategory?.slug === 'syllabus' || activeCategory?.slug === 'programmes') ? 'block' : 'flex gap-4'}`}>
+                  {(activeCategory?.slug !== 'syllabus' && activeCategory?.slug !== 'programmes') && (
                     <div className="flex-1">
                       <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Section Title (e.g., VISION)</label>
                       <input
@@ -417,7 +418,7 @@ export default function EditDepartment() {
                     </div>
                   )}
                   
-                  <div className={`${activeCategory?.slug === 'syllabus' ? 'w-full' : 'w-1/3'}`}>
+                  <div className={`${(activeCategory?.slug === 'syllabus' || activeCategory?.slug === 'programmes') ? 'w-full' : 'w-1/3'}`}>
                     {activeCategory?.slug === 'syllabus' ? (
                       <div className="w-full p-6 bg-white rounded-2xl shadow-sm border-2 border-blue-50 border-dashed">
                         {/* Syllabus Builder Content (Keep as is) */}
@@ -486,6 +487,111 @@ export default function EditDepartment() {
                             } catch (err) { alert('Failed to add row'); }
                             setUploading(false);
                           }} disabled={uploading} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 disabled:bg-gray-400 transition-all cursor-pointer shadow-lg active:scale-95">{uploading ? 'UPLOADING...' : 'ADD ROW TO TABLE'}</button>
+                        </div>
+                      </div>
+                    ) : activeCategory?.slug === 'programmes' ? (
+                      <div className="w-full p-6 bg-white rounded-2xl shadow-sm border-2 border-purple-50 border-dashed">
+                        <div className="flex items-center justify-between mb-6">
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-800 m-0">Programmes Builder</h3>
+                            <p className="text-xs text-gray-400 mt-1 uppercase font-bold tracking-tighter">Current Section: {activeSection.section_title || 'Programmes'}</p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const template = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: sans-serif; table-layout: fixed; word-wrap: break-word;"><tbody><tr><td style="padding: 15px 12px; border-bottom: 2px solid #ccc; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; width: 35%; vertical-align: top; white-space: normal;">PROGRAMMES OFFERED</td><td style="padding: 15px 12px; border-bottom: 2px solid #ccc; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; width: 65%; vertical-align: top; white-space: normal;">ELIGIBILITY</td></tr></tbody></table>`;
+                              setActiveSection({ ...activeSection, content: activeSection.content + template });
+                            }}
+                            className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-bold hover:bg-black transition border-none cursor-pointer shadow-sm"
+                          >+ Insert Programmes Table</button>
+                        </div>
+
+                        <div className="flex flex-col gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                          <div className="flex gap-4 items-start">
+                            <div className="w-1/3">
+                              <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Programme Name</label>
+                              <input type="text" value={programmeFormData.name} onChange={(e) => setProgrammeFormData({...programmeFormData, name: e.target.value})} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-purple-400 focus:outline-none bg-white transition-all" placeholder="e.g. M.Sc. (Biotechnology)" />
+                            </div>
+                            <div className="flex-1">
+                              <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Eligibility</label>
+                              <textarea value={programmeFormData.eligibility} onChange={(e) => setProgrammeFormData({...programmeFormData, eligibility: e.target.value})} className="w-full p-3 text-sm border-2 border-gray-200 rounded-lg focus:border-purple-400 focus:outline-none bg-white transition-all min-h-[46px]" placeholder="Candidate who has passed..." />
+                            </div>
+                          </div>
+                          
+                          {/* Links Row */}
+                          <div className="flex gap-4 items-end bg-white p-3 rounded-lg border border-gray-200">
+                            <div className="w-1/2 flex gap-2 items-end border-r pr-4">
+                                <div className="flex-1">
+                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 1 Label (Optional)</label>
+                                  <input type="text" value={programmeFormData.link1Text} onChange={(e) => setProgrammeFormData({...programmeFormData, link1Text: e.target.value})} className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg focus:border-purple-400 bg-white" placeholder="e.g. University Regulations" />
+                                </div>
+                                <div className="flex-1">
+                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 1 PDF</label>
+                                  <input type="file" accept=".pdf" onChange={(e) => setProgrammeFormData({...programmeFormData, link1File: e.target.files[0]})} className="w-full p-1.5 text-[10px] border-2 border-gray-200 rounded-lg bg-white" />
+                                </div>
+                            </div>
+                            <div className="w-1/2 flex gap-2 items-end pl-2">
+                                <div className="flex-1">
+                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 2 Label (Optional)</label>
+                                  <input type="text" value={programmeFormData.link2Text} onChange={(e) => setProgrammeFormData({...programmeFormData, link2Text: e.target.value})} className="w-full p-2 text-xs border-2 border-gray-200 rounded-lg focus:border-purple-400 bg-white" placeholder="e.g. Brochure" />
+                                </div>
+                                <div className="flex-1">
+                                  <label className="text-[10px] text-gray-500 font-bold block mb-2 uppercase tracking-widest">Link 2 PDF</label>
+                                  <input type="file" accept=".pdf" onChange={(e) => setProgrammeFormData({...programmeFormData, link2File: e.target.files[0]})} className="w-full p-1.5 text-[10px] border-2 border-gray-200 rounded-lg bg-white" />
+                                </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-end mt-2">
+                            <button onClick={async () => {
+                              if (!programmeFormData.name) { alert('Please enter a Programme Name!'); return; }
+                              setUploading(true);
+                              let eligibilityHtml = programmeFormData.eligibility.replace(/\n/g, '<br/>');
+                              
+                              const base = apiUrl.replace('/api', '');
+                              let linksHtml = '';
+                              
+                              if (programmeFormData.link1Text && programmeFormData.link1File) {
+                                const fd1 = new FormData(); fd1.append('file', programmeFormData.link1File);
+                                try {
+                                  const res1 = await fetch(`${apiUrl}/admin/upload`, { method: 'POST', body: fd1 });
+                                  const data1 = await res1.json();
+                                  linksHtml += `<a href="${base}${data1.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none; margin-right: 15px;">${programmeFormData.link1Text}</a>`;
+                                } catch (err) { alert('Failed to upload Link 1'); }
+                              } else if (programmeFormData.link1Text && !programmeFormData.link1File) {
+                                alert("Please select a PDF file for Link 1"); setUploading(false); return;
+                              }
+                              
+                              if (programmeFormData.link2Text && programmeFormData.link2File) {
+                                const fd2 = new FormData(); fd2.append('file', programmeFormData.link2File);
+                                try {
+                                  const res2 = await fetch(`${apiUrl}/admin/upload`, { method: 'POST', body: fd2 });
+                                  const data2 = await res2.json();
+                                  linksHtml += `<a href="${base}${data2.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none;">${programmeFormData.link2Text}</a>`;
+                                } catch (err) { alert('Failed to upload Link 2'); }
+                              } else if (programmeFormData.link2Text && !programmeFormData.link2File) {
+                                alert("Please select a PDF file for Link 2"); setUploading(false); return;
+                              }
+                              
+                              if (linksHtml) {
+                                eligibilityHtml += (eligibilityHtml ? '<br/><br/>' : '') + linksHtml;
+                              }
+                              
+                              const newRow = `<tr><td style="padding: 15px 12px; border-bottom: 1px solid #eee; color: #444; font-size: 14px; vertical-align: top; width: 35%; white-space: normal; word-wrap: break-word;">${programmeFormData.name}</td><td style="padding: 15px 12px; border-bottom: 1px solid #eee; color: #555; font-size: 14px; vertical-align: top; line-height: 1.6; width: 65%; white-space: normal; word-wrap: break-word;">${eligibilityHtml}</td></tr>`;
+                              if (activeSection.content.toLowerCase().includes('</tbody>')) {
+                                let newContent = activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>');
+                                setActiveSection({ ...activeSection, content: newContent }); 
+                                setProgrammeFormData({ name: '', eligibility: '', link1Text: '', link1File: null, link2Text: '', link2File: null }); 
+                                alert('✓ New Programme Added to Table!');
+                              } else if (activeSection.content.toLowerCase().includes('</table>')) {
+                                let newContent = activeSection.content.replace(/<\/table>/i, newRow + '</table>');
+                                setActiveSection({ ...activeSection, content: newContent }); 
+                                setProgrammeFormData({ name: '', eligibility: '', link1Text: '', link1File: null, link2Text: '', link2File: null }); 
+                                alert('✓ New Programme Added to Table!');
+                              } else { alert('Please insert a Programmes Table first!'); }
+                              
+                              setUploading(false);
+                            }} disabled={uploading} className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-purple-700 transition-all cursor-pointer shadow-lg active:scale-95 whitespace-nowrap disabled:bg-gray-400">{uploading ? 'UPLOADING...' : 'ADD PROGRAMME'}</button>
+                          </div>
                         </div>
                       </div>
                     ) : (

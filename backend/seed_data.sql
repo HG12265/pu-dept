@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS department_sections (
     id INT PRIMARY KEY AUTO_INCREMENT,
     dept_id INT NOT NULL,
     section_title VARCHAR(255) NOT NULL,
+    category VARCHAR(100) DEFAULT 'home',
     content TEXT NOT NULL,
     order_index INT DEFAULT 0,
     FOREIGN KEY (dept_id) REFERENCES departments(id) ON DELETE CASCADE
