@@ -66,6 +66,7 @@ export default function DeptPage() {
 
   const syllabusSections = dept?.sections?.filter(section => section.category === 'syllabus') || [];
   const isSyllabusTab = activeTab === 'syllabus';
+  const isProgrammesTab = activeTab === 'programmes';
 
   if (loading) {
     return (
@@ -146,7 +147,7 @@ export default function DeptPage() {
                       </h3>
                     )}
                     <div 
-                      className={`text-[15px] md:text-[16px] text-[#444] leading-[1.8] ${isSyllabusTab ? 'syllabus-content' : 'prose'} max-w-none overflow-x-auto 
+                      className={`text-[15px] md:text-[16px] text-[#444] leading-[1.8] ${isSyllabusTab ? 'syllabus-content' : isProgrammesTab ? 'programmes-content' : 'prose'} max-w-none w-full whitespace-normal break-words overflow-x-auto scrollbar-hide 
                         prose-headings:text-[#7a0000] prose-a:text-[#d9534f] prose-a:font-bold 
                         prose-table:w-full prose-table:my-6
                         prose-table:border-collapse prose-td:p-3 prose-th:p-3`}

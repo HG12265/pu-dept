@@ -5,7 +5,7 @@ export default function DeptNavbar({ links, activeTab }) {
   if (!links || links.length === 0) return null;
 
   return (
-    <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-40 overflow-x-auto print:hidden">
+    <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-40 overflow-x-auto scrollbar-hide print:hidden">
       <div className="container mx-auto max-w-[1140px] px-[15px]">
         <ul className="flex list-none p-0 m-0">
           {links.map((link, idx) => {
