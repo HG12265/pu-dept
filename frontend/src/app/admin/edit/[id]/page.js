@@ -429,16 +429,11 @@ export default function EditDepartment() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
-                                const yearHeader = `<tr style="background-color: #17a2b8; border-bottom: 1px solid #333;"><td colspan="3" style="padding: 12px; color: white; font-weight: bold; text-align: center; font-family: sans-serif; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">2023 - 2024 ONWARDS</td></tr>`;
-                                if (activeSection.content.toLowerCase().includes('</tbody>')) {
-                                  let newContent = activeSection.content.replace(/<\/tbody>/i, yearHeader + '</tbody>');
-                                  setActiveSection({ ...activeSection, content: newContent });
-                                } else {
-                                  alert('Please insert a Syllabus Table first!');
-                                }
+                                const yearHeading = `<div style="margin-top: 30px;"><div style="background-color: #17a2b8; color: white; display: inline-block; padding: 10px 20px; font-weight: bold; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px;">NEW YEAR ONWARDS</div><table style="width: 100%; border-collapse: collapse; border: 1px solid #333; margin-top: -1px;"><thead><tr style="border-bottom: 1px solid #333; background-color: #fff;"><th style="padding: 15px 12px; text-align: left; border-right: 1px solid #eee; width: 10%; font-size: 14px; color: #333; text-transform: uppercase;">S.No</th><th style="padding: 15px 12px; text-align: left; border-right: 1px solid #eee; width: 70%; font-size: 14px; color: #333; text-transform: uppercase;">PROGRAMMES</th><th style="padding: 15px 12px; text-align: right; width: 20%; font-size: 14px; color: #333; text-transform: uppercase;">DETAILS</th></tr></thead><tbody></tbody></table></div>`;
+                                setActiveSection({ ...activeSection, content: activeSection.content + yearHeading });
                               }}
                               className="px-4 py-2 bg-teal-500 text-white rounded-lg text-xs font-bold hover:bg-teal-600 transition border-none cursor-pointer shadow-sm"
-                            >+ Add Year Header Row</button>
+                            >+ Add New Year Table</button>
                             <button
                               onClick={() => {
                                 const template = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: sans-serif; border: 1px solid #333;"><thead><tr style="background-color: #fff; border-bottom: 1px solid #333;"><th style="padding: 12px; text-align: center; width: 10%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; border-right: 1px solid #333;">S.No</th><th style="padding: 12px; text-align: left; width: 70%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase; border-right: 1px solid #333;">PROGRAMMES</th><th style="padding: 12px; text-align: center; width: 20%; font-weight: bold; color: #333; font-size: 14px; text-transform: uppercase;">DETAILS</th></tr></thead><tbody><tr style="background-color: #17a2b8; border-bottom: 1px solid #333;"><td colspan="3" style="padding: 12px; color: white; font-weight: bold; text-align: center; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">2023 - 2024 ONWARDS</td></tr></tbody></table>`;
@@ -478,10 +473,11 @@ export default function EditDepartment() {
                               const base = apiUrl.replace('/api', '');
                               const res = await fetch(`${apiUrl}/admin/upload`, { method: 'POST', body: formData });
                               const data = await res.json();
-                              const newRow = `<tr style="background-color: #fafafa; border-bottom: 1px solid #333;"><td style="padding: 12px; color: #444; font-size: 14px; border-right: 1px solid #333; text-align: center;">${syllabusFormData.sno}</td><td style="padding: 12px; color: #333; font-weight: 500; font-size: 14px; border-right: 1px solid #333;">${syllabusFormData.title}</td><td style="padding: 12px; text-align: center;"><a href="${base}${data.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none; font-size: 14px; text-transform: uppercase;">SYLLABUS</a></td></tr>`;
+                              const newRow = `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 15px 12px; border-right: 1px solid #eee; text-align: left; font-size: 14px; color: #666;">${syllabusFormData.sno}</td><td style="padding: 15px 12px; border-right: 1px solid #eee; font-size: 14px; color: #333; font-weight: 500;">${syllabusFormData.title}</td><td style="padding: 15px 12px; text-align: right;"><a href="${base}${data.url}" target="_blank" style="color: #990033; font-weight: bold; text-decoration: none; font-size: 16px; text-transform: uppercase;">SYLLABUS</a></td></tr>`;
                               if (activeSection.content.toLowerCase().includes('</tbody>')) {
-                                let newContent = activeSection.content.replace(/<\/tbody>/i, newRow + '</tbody>');
-                                setActiveSection({ ...activeSection, content: newContent }); setSyllabusFormData({ sno: '', title: '', file: null }); alert('✓ New Row Added to Table!');
+                                let newContent = activeSection.content.lastIndexOf('</tbody>');
+                                let updatedContent = activeSection.content.substring(0, newContent) + newRow + activeSection.content.substring(newContent);
+                                setActiveSection({ ...activeSection, content: updatedContent }); setSyllabusFormData({ sno: '', title: '', file: null }); alert('✓ New Row Added to Last Table!');
                               } else { alert('Please insert a Syllabus Table first!'); }
                             } catch (err) { alert('Failed to add row'); }
                             setUploading(false);
